@@ -1,0 +1,91 @@
+module subtrator_1bit(A, B, Bin, Dif, Bout);
+    input A, B, Bin;
+    output Dif, Bout;
+    wire T1, T2, T3, T4;
+    wire nA;
+
+    xor Xor0(T1, A, B);
+    xor Xor1(Dif, T1, Bin);
+
+    not not0(nA, A);
+
+    and And0(T2, nA, B);
+    and And1(T3, B, Bin);
+    and And2(T4, nA, Bin);
+    or Or0(Bout, T2, T3, T4);
+endmodule
+
+module subtrator_8bits(
+    input A0, A1, A2, A3, A4, A5, A6, A7,
+    input B0, B1, B2, B3, B4, B5, B6, B7,
+    input Bin,
+    output Dif0, Dif1, Dif2, Dif3, Dif4, Dif5, Dif6, Dif7,
+    output Bout
+);
+    wire bout0_bin1, bout1_bin2, bout2_bin3, bout3_bin4, bout4_bin5, bout5_bin6, bout6_bin7;
+
+    subtrator_1bit subtrator1(
+        .A(A0),
+        .B(B0),
+        .Bin(Bin),
+        .Dif(Dif0),
+        .Bout(bout0_bin1)
+    );
+
+    subtrator_1bit subtrator2(
+        .A(A1),
+        .B(B1),
+        .Bin(bout0_bin1),
+        .Dif(Dif1),
+        .Bout(bout1_bin2)
+    );
+
+    subtrator_1bit subtrator3(
+        .A(A2),
+        .B(B2),
+        .Bin(bout1_bin2),
+        .Dif(Dif2),
+        .Bout(bout2_bin3)
+    );
+
+    subtrator_1bit subtrator4(
+        .A(A3),
+        .B(B3),
+        .Bin(bout2_bin3),
+        .Dif(Dif3),
+        .Bout(bout3_bin4)
+    );
+
+    subtrator_1bit subtrator5(
+        .A(A4),
+        .B(B4),
+        .Bin(bout3_bin4),
+        .Dif(Dif4),
+        .Bout(bout4_bin5)
+    );
+
+    subtrator_1bit subtrator6(
+        .A(A5),
+        .B(B5),
+        .Bin(bout4_bin5),
+        .Dif(Dif5),
+        .Bout(bout5_bin6)
+    );
+
+    subtrator_1bit subtrator7(
+        .A(A6),
+        .B(B6),
+        .Bin(bout5_bin6),
+        .Dif(Dif6),
+        .Bout(bout6_bin7)
+    );
+
+    subtrator_1bit subtrator8(
+        .A(A7),
+        .B(B7),
+        .Bin(bout6_bin7),
+        .Dif(Dif7),
+        .Bout(Bout)
+    );
+
+endmodule

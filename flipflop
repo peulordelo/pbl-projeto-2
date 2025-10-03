@@ -1,0 +1,48 @@
+module latch_SR_NAND(
+    input S, R,
+    output Q, nQ
+);
+    wire Q_int, nQ_int;
+
+    nand N1(Q_int, S, nQ_int);
+    nand N2(nQ_int, R, Q_int);
+
+    nand N3(Q, Q_int, Q_int);
+    nand N4(nQ, nQ_int, nQ_int);
+endmodule
+
+module flipflop_D(
+    input D,
+    input Clk,
+    output Q,
+    output nQ
+);
+    wire D_bar;
+    wire S_master, R_master;
+    wire Q_master, nQ_master;
+    wire Clk_bar;
+    wire S_slave, R_slave;
+
+    not Not0(D_bar, D);
+    not Not1(Clk_bar, Clk);
+
+    and And0(S_master, D, Clk);
+    and And1(R_master, D_bar, Clk);
+
+    latch_SR_NAND master(
+        .S(S_master),
+        .R(R_master),
+        .Q(Q_master),
+        .nQ(nQ_master)
+    );
+
+    and And2(S_slave, Q_master, Clk_bar);
+    and And3(R_slave, nQ_master, Clk_bar);
+
+    latch_SR_NAND slave(
+        .S(S_slave),
+        .R(R_slave),
+        .Q(Q),
+        .nQ(nQ)
+    );
+endmodule

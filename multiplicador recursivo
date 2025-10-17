@@ -1,0 +1,71 @@
+module NOT1(Y, A); 
+    output Y; 
+    input A; 
+    not (Y, A); 
+endmodule
+
+module AND2(Y, A, B); 
+    output Y; 
+    input A, B; 
+    and (Y, A, B); 
+endmodule
+
+module OR2(Y, A, B); 
+    output Y; 
+    input A, B; 
+    or (Y, A, B); 
+endmodule
+
+module AND3(Y, A, B, C); 
+    output Y; 
+    input A, B, C; 
+    and (Y, A, B, C); 
+endmodule
+
+
+module fsm_proximo_estado (
+    state0, state1, state2,
+    start,
+    count_done,
+    next_state0, next_state1, next_state2
+);
+    input wire state0, state1, state2;
+    input wire start;
+    input wire count_done;
+    
+    output wire next_state0, next_state1, next_state2;
+
+    wire is_idle, is_load, is_add, is_shift, is_done;
+    wire s0_n, s1_n, s2_n;
+
+    NOT1 N0(s0_n, state0);
+    NOT1 N1(s1_n, state1);
+    NOT1 N2(s2_n, state2);
+
+    AND3 D_IDLE(is_idle,   s2_n, s1_n, s0_n);
+    AND3 D_LOAD(is_load,   s2_n, s1_n, state0);
+    AND3 D_ADD(is_add,     s2_n, state1, s0_n);
+    AND3 D_SHIFT(is_shift, s2_n, state1, state0);
+    AND3 D_DONE(is_done,   state2, s1_n, s0_n);
+
+    wire go_to_idle, go_to_load, go_to_add, go_to_shift, go_to_done;
+    
+    assign go_to_idle = is_done;
+    
+    AND2 T_LOAD(go_to_load, is_idle, start);
+
+    wire not_count_done;
+    NOT1 N_COUNT(not_count_done, count_done);
+    wire from_shift_to_add;
+    AND2 T_ADD_1(from_shift_to_add, is_shift, not_count_done);
+    OR2  T_ADD_2(go_to_add, is_load, from_shift_to_add);
+
+    assign go_to_shift = is_add;
+    
+    AND2 T_DONE(go_to_done, is_shift, count_done);
+
+    OR2  NS0_LOGIC(next_state0, go_to_load, go_to_shift);
+    OR2  NS1_LOGIC(next_state1, go_to_add, go_to_shift);
+    assign next_state2 = go_to_done;
+
+endmodule

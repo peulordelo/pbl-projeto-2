@@ -1,0 +1,34 @@
+module registrador_8bits(
+    clock, reset, load_en, 
+    va0, va1, va2, va3, va4, va5, va6, va7, 
+    vc0, vc1, vc2, vc3, vc4, vc5, vc6, vc7
+);
+    input clock, reset, load_en;
+    input va0, va1, va2, va3, va4, va5, va6, va7;
+    output vc0, vc1, vc2, vc3, vc4, vc5, vc6, vc7;
+
+    reg vc0, vc1, vc2, vc3, vc4, vc5, vc6, vc7;
+
+    always @(posedge clock) begin
+        if (reset == 1'b1) begin
+            vc0 <= 1'b0;
+            vc1 <= 1'b0;
+            vc2 <= 1'b0;
+            vc3 <= 1'b0;
+            vc4 <= 1'b0;
+            vc5 <= 1'b0;
+            vc6 <= 1'b0;
+            vc7 <= 1'b0;
+        end else if (load_en == 1'b1) begin
+            vc0 <= va0;
+            vc1 <= va1;
+            vc2 <= va2;
+            vc3 <= va3;
+            vc4 <= va4;
+            vc5 <= va5;
+            vc6 <= va6;
+            vc7 <= va7;
+        end
+    end
+
+endmodule
